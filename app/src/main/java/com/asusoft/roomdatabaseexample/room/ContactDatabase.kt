@@ -1,12 +1,19 @@
 package com.asusoft.roomdatabaseexample.room
 
 import android.content.Context
+import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+@Database(
+    version = 1,
+    entities = [Contact::class],
+    autoMigrations = [],
+    exportSchema = true
+)
 abstract class ContactDatabase: RoomDatabase() {
     abstract fun contactDao(): ContactDAO
 
@@ -25,17 +32,18 @@ abstract class ContactDatabase: RoomDatabase() {
     companion object {
         private var INSTANCE: ContactDatabase? = null
 
+        @Synchronized
         fun getDatabase(context: Context, scope: CoroutineScope): ContactDatabase {
-            return INSTANCE ?: synchronized(this) {
-                val instance = Room.databaseBuilder(
+            if (INSTANCE == null) {
+                INSTANCE = Room.databaseBuilder(
                     context.applicationContext,
                     ContactDatabase::class.java,
                     "contact"
                 ).addCallback(ContactDataBaseCallback(scope))
                     .build()
-                INSTANCE = instance
-                instance
             }
+
+            return INSTANCE!!
         }
     }
 }

@@ -23,8 +23,8 @@ class NewContactActivity : AppCompatActivity() {
             if (TextUtils.isEmpty(numberEditText.text)) {
                 setResult(Activity.RESULT_CANCELED, replyIntent)
             } else {
-                val name = nameEditText.text
-                val number = numberEditText.text
+                val name = nameEditText.text.toString()
+                val number = numberEditText.text.toString()
 
                 replyIntent.putExtra("name", name)
                 replyIntent.putExtra("number", number)
